@@ -299,7 +299,7 @@ def slim(X_train: torch.Tensor, y_train: torch.Tensor, X_test: torch.Tensor = No
 
     optimizer.elite.version = slim_version
 
-    return optimizer.elite
+    return optimizer.elite, optimizer.population
 
 
 if __name__ == "__main__":
