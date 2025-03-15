@@ -1,0 +1,10 @@
+{"input1":[0],"output1":[0],"output2":[]}
+{"input1":[10],"output1":[10],"output2":[]}
+{"input1":[100],"output1":[100],"output2":[]}
+{"input1":[1000],"output1":[1000],"output2":[]}
+{"input1":[10000],"output1":[10000],"output2":[]}
+{"input1":[2,129],"output1":[2],"output2":[129]}
+{"input1":[0,40],"output1":[0],"output2":[40]}
+{"input1":[9999,74],"output1":[9999],"output2":[74]}
+{"input1":[9879,9950],"output1":[9879],"output2":[9950]}
+{"input1":[9225,9994],"output1":[9225],"output2":[9994]}

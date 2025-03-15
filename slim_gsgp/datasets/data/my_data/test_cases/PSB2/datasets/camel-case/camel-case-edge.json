@@ -1,0 +1,11 @@
+{"input1":"","output1":""}
+{"input1":"nospaceordash","output1":"nospaceordash"}
+{"input1":"two-words","output1":"twoWords"}
+{"input1":"two words","output1":"two words"}
+{"input1":"all separate words","output1":"all separate words"}
+{"input1":"all-one-word-dashed","output1":"allOneWordDashed"}
+{"input1":"loooooong-wooooords","output1":"loooooongWooooords"}
+{"input1":"loooooong wooooords","output1":"loooooong wooooords"}
+{"input1":"a-b-c-d-e-f-g-h-i-j","output1":"aBCDEFGHIJ"}
+{"input1":"a b c d e f g h i j","output1":"a b c d e f g h i j"}
+{"input1":"saaaaaaaaaaaaaaaaame","output1":"saaaaaaaaaaaaaaaaame"}

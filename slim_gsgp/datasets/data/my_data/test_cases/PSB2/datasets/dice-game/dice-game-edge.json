@@ -1,0 +1,15 @@
+{"input1":1,"input2":2,"output1":0.0}
+{"input1":2,"input2":1,"output1":0.5}
+{"input1":99,"input2":100,"output1":0.49}
+{"input1":100,"input2":99,"output1":0.5}
+{"input1":1,"input2":100,"output1":0.0}
+{"input1":100,"input2":1,"output1":0.99}
+{"input1":3,"input2":4,"output1":0.25}
+{"input1":4,"input2":3,"output1":0.5}
+{"input1":4,"input2":6,"output1":0.25}
+{"input1":6,"input2":4,"output1":0.5833333}
+{"input1":49,"input2":50,"output1":0.48}
+{"input1":50,"input2":49,"output1":0.5}
+{"input1":1,"input2":1,"output1":0.0}
+{"input1":50,"input2":50,"output1":0.49}
+{"input1":100,"input2":100,"output1":0.495}
