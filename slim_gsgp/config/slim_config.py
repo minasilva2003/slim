@@ -20,12 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 import torch
-from slim_gsgp.initializers.initializers import rhh, grow, full
-from slim_gsgp.algorithms.GSGP.operators.crossover_operators import geometric_crossover
-from slim_gsgp.algorithms.SLIM_GSGP.operators.mutators import (deflate_mutation)
-from slim_gsgp.selection.selection_algorithms import tournament_selection_min
-from slim_gsgp.evaluators.fitness_functions import *
-from slim_gsgp.utils.utils import (get_best_min, protected_div)
+from initializers.initializers import rhh, grow, full
+from algorithms.GSGP.operators.crossover_operators import geometric_crossover
+from algorithms.SLIM_GSGP.operators.mutators import (deflate_mutation)
+from selection.selection_algorithms import tournament_selection_min
+from evaluators.fitness_functions import *
+from utils.utils import get_best_min, protected_div, protected_pow, protected_exp, protected_log, protected_mod, protected_sqrt, sign_function
 
 # Define functions and constants
 
@@ -33,7 +33,7 @@ FUNCTIONS = {
     'add': {'function': torch.add, 'arity': 2},
     'subtract': {'function': torch.sub, 'arity': 2},
     'multiply': {'function': torch.mul, 'arity': 2},
-    'divide': {'function': protected_div, 'arity': 2}
+    'divide': {'function': protected_div, 'arity': 2},
 }
 
 CONSTANTS = {

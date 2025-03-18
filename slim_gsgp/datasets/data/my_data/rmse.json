@@ -1,24 +1,12 @@
 {"PSB1": ["collatz_numbers",
-    "count_odds",
-    "last_index_of_zero",
     "median",
     "number_io",
-    "scrabble_score",
     "smallest",
     "sum_of_squares",
-    "syllables",
-    "vector_average",
     "wallis_pi"],
 "PSB2":
-    ["basement",
-    "bouncing-balls",
-    "bowling",
+    ["bouncing-balls",
     "dice-game",
-    "fuel-cost",
     "gcd",
-    "luhn",
-    "paired-digits",
-    "shopping-list",
-    "snow-day",
-    "vector-distance"]
+    "snow-day"]
 }

@@ -27,13 +27,13 @@ import uuid
 import os
 import warnings
 
-from slim_gsgp.algorithms.SLIM_GSGP.slim_gsgp import SLIM_GSGP
-from slim_gsgp.config.slim_config import *
-from slim_gsgp.utils.logger import log_settings
-from slim_gsgp.utils.utils import (get_terminals, check_slim_version, validate_inputs, generate_random_uniform,
+from algorithms.SLIM_GSGP.slim_gsgp import SLIM_GSGP
+from config.slim_config import *
+from utils.logger import log_settings
+from utils.utils import (get_terminals, check_slim_version, validate_inputs, generate_random_uniform,
                                    get_best_min, get_best_max)
-from slim_gsgp.algorithms.SLIM_GSGP.operators.mutators import inflate_mutation
-from slim_gsgp.selection.selection_algorithms import tournament_selection_max, tournament_selection_min
+from algorithms.SLIM_GSGP.operators.mutators import inflate_mutation
+from selection.selection_algorithms import tournament_selection_max, tournament_selection_min
 
 
 ELITES = {}
@@ -206,6 +206,7 @@ def slim(X_train: torch.Tensor, y_train: torch.Tensor, X_test: torch.Tensor = No
     slim_gsgp_pi_init["TERMINALS"] = TERMINALS
     try:
         slim_gsgp_pi_init["FUNCTIONS"] = {key: FUNCTIONS[key] for key in tree_functions}
+        print(tree_functions)
     except KeyError as e:
         valid_functions = list(FUNCTIONS)
         raise KeyError(

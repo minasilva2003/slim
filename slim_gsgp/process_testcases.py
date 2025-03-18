@@ -33,12 +33,39 @@ def txt_to_csv(input_txt_file, output_csv_file):
             writer.writerow(inval[i] + [outval[i][0]])  # Assumes outval has a nested structure
 
 
+def write_json_to_csv(json_filename, csv_filename):
+    # Read JSON lines and store data
+    data = []
+    with open(json_filename, "r") as json_file:
+        counter=0 #only get 1000 test cases
+        for line in json_file:
+            entry = json.loads(line.strip())  # Parse JSON line
+            data.append(entry)  # Store dictionary
+            counter+=1
+            if counter==1000:
+                break
+
+    # Extract column names dynamically
+    fieldnames = list(data[0].keys())  # Use the keys from the first entry
+
+    # Write to CSV file
+    with open(csv_filename, "w", newline="") as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()  # Write column names
+        writer.writerows(data)  # Write data rows
+
+    print(f"CSV file '{csv_filename}' successfully created!")
 
 problems=load_data("datasets/data/my_data/rmse.json")
 
 print(problems)
 
+"""
 for problem in problems["PSB1"]:
     print(problem)
     txt_to_csv(f"datasets/data/my_data/test_cases/PSB1/{problem}/Test.txt", f"datasets/data/my_data/test_cases/PSB1/{problem}/cases.csv")
+"""
+
+for problem in problems["PSB2"]:
+    write_json_to_csv(f"datasets/data/my_data/test_cases/PSB2/datasets/{problem}/{problem}-random.json", f"datasets/data/my_data/test_cases/PSB2/datasets/{problem}/cases.csv")
 

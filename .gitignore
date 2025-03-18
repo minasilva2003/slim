@@ -5,6 +5,7 @@ slim_gsgp/log/TESTING_GSGP_settings.csv
 slim_gsgp/log/slim_postgrid_resid_build_sale_price-size.csv_test_ignore
 slim_gsgp/log/slim_postgrid_resid_build_sale_price-size.csv_test_ignore
 slim_gsgp/datasets/data/my_data/test_cases
+slim_gsgp/results
 .DS_Store
 .idea/.name
 *.pyc

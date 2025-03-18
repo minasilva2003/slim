@@ -54,6 +54,54 @@ def protected_div(x1, x2):
         torch.tensor(1.0, dtype=x2.dtype, device=x2.device),
     )
 
+def protected_pow(x, y):
+    """Protected power function: avoids fractional exponents on negative bases."""
+    return torch.where(
+        (x >= 0) | (y % 1 == 0),  # Allow normal power operation when valid
+        torch.pow(torch.abs(x) + 1e-6, y),
+        torch.tensor(1.0, dtype=x.dtype, device=x.device)  # Return safe fallback
+    )
+
+def protected_sqrt(x):
+    """Protected square root: prevents NaNs by setting negative values to zero."""
+    return torch.where(
+        x >= 0,
+        torch.sqrt(x),
+        torch.tensor(0.0, dtype=x.dtype, device=x.device)  # Replace negatives with 0
+    )
+
+def protected_log(x):
+    """Protected logarithm: avoids log(0) and negative inputs."""
+    return torch.where(
+        x > 1e-6,
+        torch.log(x),
+        torch.tensor(-20.0, dtype=x.dtype, device=x.device)  # Safe fallback value
+    )
+
+def protected_exp(x):
+    """Protected exponential: prevents overflow by clamping large values."""
+    return torch.exp(torch.clamp(x, max=20))  # Avoids Inf
+
+def protected_mod(x, y):
+    """Protected modulo: prevents division by zero."""
+    return torch.where(
+        torch.abs(y) > 1e-6,
+        torch.remainder(x, y),
+        torch.tensor(0.0, dtype=x.dtype, device=x.device)  # Safe fallback
+    )
+
+def protected_div(x1, x2):
+    """Protected division: avoids division by zero."""
+    return torch.where(
+        torch.abs(x2) > 0.001,
+        torch.div(x1, x2),
+        torch.tensor(1.0, dtype=x1.dtype, device=x1.device)  # Safe fallback
+    )
+
+def sign_function(x):
+    """Sign function: returns -1, 0, or 1."""
+    return torch.sign(torch.nan_to_num(x, nan=0))  # Replace NaNs with 0
+
 
 def mean_(x1, x2):
     """

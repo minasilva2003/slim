@@ -62,71 +62,79 @@ def write_list_to_json(data, filename):
 
 rmse_problems = load_data("datasets/data/my_data/rmse.json")
 
-results = [["problem", "best_fit", "num_correct"]]
-
-correct_threshold = 0.00001
-
-for problem in rmse_problems["PSB1"]:
-
-    df = pd.read_csv(f"datasets/data/my_data/test_cases/PSB1/{problem}/cases.csv")
-
-    num_correct=0
-    best_fit=10**5
-
-    print(f"{problem}: {df.shape} test cases")
-
-    # Turning df into X and y torch.Tensors
-    X, y = load_pandas_df(df, X_y=True)
-
-    # Split into train and test sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, p_test=0.4)
-
-    # Split the test set into validation and test sets
-    X_val, X_test, y_val, y_test = train_test_split(X_test, y_test, p_test=0.5)
-
-    slim_version='SLIM*SIG1'
-
-    # Apply the SLIM GSGP algorithm
-    final_tree, final_population = slim(X_train=X_train, y_train=y_train,
-                    X_test=X_val, y_test=y_val,
-                    dataset_name=f"psb1/{problem}", slim_version=slim_version, pop_size=100, n_iter=2000,
-                    ms_lower=0, ms_upper=1, p_inflate=0.5, reconstruct=True)
-
-    # Show the best individual structure at the last generation
-    final_tree.print_tree_representation()
-
-    # Get the prediction of the best individual on the test set
-    predictions = final_tree.predict(X_test)
-
-    # Compute and print the RMSE on the test set
-    print(float(rmse(y_true=y_test, y_pred=predictions)))
 
 
-    #Compute and print the RMSE for the first 1000 test cases
-    final_pop = []
-    for individual in final_population.population:
+correct_threshold = 0.01
 
-        individual.version=slim_version
-       
-        predictions = individual.predict(X[:1000])
+results = [["problem", "slim_version", "n_iter", "p_inflate", "best_fit", "num_correct"]]
 
-        fit = float(rmse(y_true=y[:1000], y_pred=predictions))
-        
-        print(fit)
+for benchmark in rmse_problems:
 
-        #solution is considered correct if fit below certain threshold
-        if(fit<correct_threshold):
-            num_correct+=1
+    for problem in rmse_problems[benchmark]:
 
-        if(fit<best_fit):
-            best_fit=fit
-        
-        final_pop.append([individual.get_tree_representation(), fit])
-        
-    results.append([problem, best_fit, num_correct])
-    write_list_to_csv(results, f"results/PSB1/stats.csv")
-    write_list_to_json(final_pop, f"results/PSB1/{problem}_pop.json")
-    
+        if benchmark=="PSB1":
+            df = pd.read_csv(f"datasets/data/my_data/test_cases/{benchmark}/{problem}/cases.csv")
+        else:
+            df = pd.read_csv(f"datasets/data/my_data/test_cases/{benchmark}/datasets/{problem}/cases.csv")
+
+        print(f"{problem}: {df.shape} test cases")
+
+        # Turning df into X and y torch.Tensors
+        X, y = load_pandas_df(df, X_y=True)
+
+        # Split into train and test sets
+        X_train, X_test, y_train, y_test = train_test_split(X, y, p_test=0.4)
+
+        # Split the test set into validation and test sets
+        X_val, X_test, y_val, y_test = train_test_split(X_test, y_test, p_test=0.5)
+
+        slim_version_list=["SLIM+SIG1"]
+        n_iter_list=[2000]
+        p_inflate_list=[0.1, 0.7]
+
+        # Apply the SLIM GSGP algorithm
+        for cur_slim_version in slim_version_list:
+            for cur_n_iter in n_iter_list:
+                for cur_p_inflate in p_inflate_list:
+
+                    num_correct=0
+                    best_fit=10**4
+
+                    final_tree, final_population = slim(X_train=X_train, y_train=y_train,
+                                    X_test=X_val, y_test=y_val,
+                                    dataset_name=f"{benchmark}/{problem}", slim_version=cur_slim_version, pop_size=100, n_iter=cur_n_iter,
+                                    ms_lower=0, ms_upper=1, p_inflate=cur_p_inflate, reconstruct=True)
+
+                    # Show the best individual structure at the last generation
+                    final_tree.print_tree_representation()
+
+                    #Compute and print the RMSE for the first 1000 test cases
+                    
+                    final_pop = []
+                    for individual in final_population.population:
+
+                        individual.version=cur_slim_version
+                    
+                        predictions = individual.predict(X[:1000])
+
+                        fit = float(rmse(y_true=y[:1000], y_pred=predictions))
+                        
+                        #print(fit)
+
+                        #solution is considered correct if fit below certain threshold
+                        if(fit<correct_threshold):
+                            num_correct+=1
+
+                        if(fit<best_fit):
+                            best_fit=fit
+                        
+                        final_pop.append([individual.get_tree_representation(), fit])
+                    
+                    
+                    results.append([problem, cur_slim_version, cur_n_iter, cur_p_inflate, best_fit, num_correct])
+                    write_list_to_csv(results, f"results/slim_+_sig1/new_funcs.csv")
+                    write_list_to_json(final_pop, f"results/slim_+_sig1/{problem}_{str(cur_p_inflate)[2]}_pop.json")
+
 
 
 
