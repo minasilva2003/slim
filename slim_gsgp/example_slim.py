@@ -64,7 +64,7 @@ rmse_problems = load_data("datasets/data/my_data/rmse.json")
 
 
 
-correct_threshold = 0.01
+correct_threshold = 0.1
 
 results = [["problem", "slim_version", "n_iter", "p_inflate", "best_fit", "num_correct"]]
 
@@ -88,9 +88,9 @@ for benchmark in rmse_problems:
         # Split the test set into validation and test sets
         X_val, X_test, y_val, y_test = train_test_split(X_test, y_test, p_test=0.5)
 
-        slim_version_list=["SLIM+SIG1"]
+        slim_version_list=["SLIM+SIG1", "SLIM+SIG2", "SLIM+ABS", "SLIM*SIG1", "SLIM*SIG2", "SLIM*ABS"]
         n_iter_list=[2000]
-        p_inflate_list=[0.1, 0.7]
+        p_inflate_list=[0.1, 0.5, 0.7]
 
         # Apply the SLIM GSGP algorithm
         for cur_slim_version in slim_version_list:
@@ -103,7 +103,7 @@ for benchmark in rmse_problems:
                     final_tree, final_population = slim(X_train=X_train, y_train=y_train,
                                     X_test=X_val, y_test=y_val,
                                     dataset_name=f"{benchmark}/{problem}", slim_version=cur_slim_version, pop_size=100, n_iter=cur_n_iter,
-                                    ms_lower=0, ms_upper=1, p_inflate=cur_p_inflate, reconstruct=True)
+                                    ms_lower=0, ms_upper=1, p_inflate=cur_p_inflate, verbose=0, reconstruct=True)
 
                     # Show the best individual structure at the last generation
                     final_tree.print_tree_representation()
@@ -132,8 +132,8 @@ for benchmark in rmse_problems:
                     
                     
                     results.append([problem, cur_slim_version, cur_n_iter, cur_p_inflate, best_fit, num_correct])
-                    write_list_to_csv(results, f"results/slim_+_sig1/new_funcs.csv")
-                    write_list_to_json(final_pop, f"results/slim_+_sig1/{problem}_{str(cur_p_inflate)[2]}_pop.json")
+                    write_list_to_csv(results, f"results/new_threshold_stats.csv")
+                    #write_list_to_json(final_pop, f"results/{problem}_{str(cur_p_inflate)[2]}_pop.json")
 
 
 
