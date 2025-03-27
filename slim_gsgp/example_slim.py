@@ -75,9 +75,6 @@ for epoch in range(1,31):
 
         for problem in rmse_problems[benchmark]:
 
-            if problem != "smallest":
-                continue
-
             if benchmark=="PSB1":
                 df = pd.read_csv(f"datasets/data/my_data/test_cases/{benchmark}/{problem}/cases.csv")
             else:
