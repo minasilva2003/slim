@@ -141,7 +141,7 @@ for epoch in range(1,31):
                         
                         results.append([problem, cur_slim_version, cur_n_iter, cur_p_inflate, best_fit, num_correct])
                         write_list_to_csv(results, f"results/run_{epoch}.csv")
-                        #write_list_to_json(final_pop, f"results/pop_.json")
+                        write_list_to_json(final_pop, f"results/pop_{epoch}.json")
 
 
 

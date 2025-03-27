@@ -56,7 +56,31 @@ def write_json_to_csv(json_filename, csv_filename):
 
     print(f"CSV file '{csv_filename}' successfully created!")
 
-problems=load_data("datasets/data/my_data/rmse.json")
+
+
+def json_to_csv(json_file, csv_file):
+    with open(json_file, 'r') as f:
+        lines = f.readlines()
+    
+    lines=lines[:1000]
+    data = [json.loads(line) for line in lines]
+    
+    with open(csv_file, 'w', newline='') as f:
+        writer = csv.writer(f)
+        
+        # Writing header
+        N = len(data[0]['input1'])
+        header = [f'col{i+1}' for i in range(N)] + ['output']
+        writer.writerow(header)
+        
+        # Writing rows
+        for entry in data:
+            writer.writerow(entry['input1'] + [entry['output1']])
+
+
+
+
+problems=load_data("datasets/data/my_data/vectors.json")
 
 print(problems)
 
@@ -64,8 +88,9 @@ print(problems)
 for problem in problems["PSB1"]:
     print(problem)
     txt_to_csv(f"datasets/data/my_data/test_cases/PSB1/{problem}/Test.txt", f"datasets/data/my_data/test_cases/PSB1/{problem}/cases.csv")
-"""
 
+
+"""
 for problem in problems["PSB2"]:
-    write_json_to_csv(f"datasets/data/my_data/test_cases/PSB2/datasets/{problem}/{problem}-random.json", f"datasets/data/my_data/test_cases/PSB2/datasets/{problem}/cases.csv")
+    json_to_csv(f"datasets/data/my_data/test_cases/PSB2/datasets/{problem}/{problem}-random.json", f"datasets/data/my_data/test_cases/PSB2/datasets/{problem}/cases.csv")
 

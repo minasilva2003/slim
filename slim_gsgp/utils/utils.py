@@ -102,6 +102,31 @@ def sign_function(x):
     """Sign function: returns -1, 0, or 1."""
     return torch.sign(torch.nan_to_num(x, nan=0))  # Replace NaNs with 0
 
+def protected_min(x, y):
+    """Protected minimum: safely computes the element-wise minimum of two tensors."""
+    return torch.where(
+        torch.isnan(x) | torch.isnan(y),  # Check for NaN values
+        torch.tensor(float('inf'), dtype=x.dtype, device=x.device),  # Replace NaNs with a large value
+        torch.min(x, y)  # Compute element-wise minimum
+    )
+
+def protected_max(x, y):
+    """Protected maximum: safely computes the element-wise maximum of two tensors."""
+    return torch.where(
+        torch.isnan(x) | torch.isnan(y),  # Check for NaN values
+        torch.tensor(float('-inf'), dtype=x.dtype, device=x.device),  # Replace NaNs with a small value
+        torch.max(x, y)  # Compute element-wise maximum
+    )
+
+def protected_abs(x):
+    """Protected absolute value: safely computes the absolute value of a tensor."""
+    return torch.where(
+        torch.isnan(x),  # Check for NaN values
+        torch.tensor(0.0, dtype=x.dtype, device=x.device),  # Replace NaNs with 0
+        torch.abs(x)  # Compute absolute value
+    )
+
+
 
 def mean_(x1, x2):
     """

@@ -1,0 +1,3 @@
+problem,slim_version,n_iter,p_inflate,best_fit,num_correct
+collatz_numbers,SLIM*SIG1,10000,0.7,45.954750061035156,0
+median,SLIM*SIG1,10000,0.7,26.632427215576172,0
