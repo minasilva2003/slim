@@ -19,28 +19,112 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from slim_gsgp.main_gsgp import gsgp  # import the slim_gsgp library
-from slim_gsgp.datasets.data_loader import load_ppb  # import the loader for the dataset PPB
-from slim_gsgp.evaluators.fitness_functions import rmse  # import the rmse fitness metric
-from slim_gsgp.utils.utils import train_test_split  # import the train-test split function
+from main_gsgp import gsgp  # import the slim_gsgp library
+from datasets.data_loader import load_pandas_df  # import the loader for the dataset PPB
+from evaluators.fitness_functions import rmse  # import the rmse fitness metric
+from utils.utils import train_test_split  # import the train-test split function
+import json
+import pandas as pd
+import csv
 
-# Load the PPB dataset
-X, y = load_ppb(X_y=True)
+def load_data(file_name):
+    with open(file_name, "r") as f:
+        return json.load(f)
+    
+def write_list_to_csv(data_list, file_name):
+    with open(file_name, "w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerows(data_list)
 
-# Split into train and test sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, p_test=0.4)
 
-# Split the test set into validation and test sets
-X_val, X_test, y_val, y_test = train_test_split(X_test, y_test, p_test=0.5)
+def write_list_to_json(data, filename):
+    """
+    Writes a list to a JSON file.
 
-# Apply the Standard GSGP algorithm
-final_tree = gsgp(X_train=X_train, y_train=y_train,
-                  X_test=X_val, y_test=y_val, p_xo=0,
-                  dataset_name='ppb', pop_size=100, n_iter=100,
-                  reconstruct=True, ms_lower=0, ms_upper=1, n_elites=2)
+    Parameters:
+    - data (list): The list to be written to the file.
+    - filename (str): The name of the JSON file.
 
-# Get the prediction of the best individual on the test set
-predictions = final_tree.predict(X_test)
+    Returns:
+    - None
+    """
+    with open(filename, 'w') as f:
+        json.dump(data, f, indent=4)  # indent=4 makes it more readable
 
-# Compute and print the RMSE on the test set
-print(float(rmse(y_true=y_test, y_pred=predictions)))
+
+rmse_problems = load_data("datasets/data/my_data/rmse.json")
+
+
+correct_threshold = 0.1
+
+results = [["problem", "best_fit", "num_correct"]]
+
+for benchmark in rmse_problems:
+
+    for problem in rmse_problems[benchmark]:
+
+        if benchmark=="PSB1":
+            df = pd.read_csv(f"datasets/data/my_data/test_cases/{benchmark}/{problem}/cases.csv")
+        else:
+            df = pd.read_csv(f"datasets/data/my_data/test_cases/{benchmark}/datasets/{problem}/cases.csv")
+
+        print(f"{problem}: {df.shape} test cases")
+
+        # Turning df into X and y torch.Tensors
+        X, y = load_pandas_df(df, X_y=True)
+
+        # Split into train and test sets
+        X_train, X_test, y_train, y_test = train_test_split(X, y, p_test=0.4)
+
+        # Split the test set into validation and test sets
+        X_val, X_test, y_val, y_test = train_test_split(X_test, y_test, p_test=0.5)
+
+        # Apply the SLIM GP algorithm
+        
+        # Apply the Standard GSGP algorithm
+        final_tree, final_population = gsgp(X_train=X_train, y_train=y_train,
+                        X_test=X_val, y_test=y_val, p_xo=0,
+                        dataset_name=f"{benchmark}", pop_size=100, n_iter=1000,
+                        reconstruct=True, ms_lower=0, ms_upper=1, n_elites=1, verbose=1)
+
+
+
+        # Show the best individual structure at the last generation
+        #final_tree.print_tree_representation()
+
+        # Get the prediction of the best individual on the test set
+        predictions = final_tree.predict(X_test)
+
+        # Compute and print the RMSE on the test set
+        print(float(rmse(y_true=y_test, y_pred=predictions)))
+
+        final_pop = []
+        best_fit = 10**4
+        num_correct = 0
+
+        for individual in final_population.population:
+
+            predictions = individual.predict(X[:1000])
+
+            fit = float(rmse(y_true=y[:1000], y_pred=predictions))
+            
+            #print(fit)
+
+            #solution is considered correct if fit below certain threshold
+            if(fit<correct_threshold):
+                num_correct+=1
+
+            if(fit<best_fit):
+                best_fit=fit
+            
+            #final_pop.append([individual.get_tree_representation(), fit])
+        
+        
+        results.append([problem, best_fit, num_correct])
+        write_list_to_csv(results, f"results/GSGP/results.csv")
+        write_list_to_json(final_pop, f"results/GSGP/{problem}_pop.json")
+
+
+
+
+

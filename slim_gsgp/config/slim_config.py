@@ -25,7 +25,8 @@ from algorithms.GSGP.operators.crossover_operators import geometric_crossover
 from algorithms.SLIM_GSGP.operators.mutators import (deflate_mutation)
 from selection.selection_algorithms import tournament_selection_min
 from evaluators.fitness_functions import *
-from utils.utils import get_best_min, protected_div, protected_pow, protected_exp, protected_log, protected_mod, protected_sqrt, sign_function
+from utils.utils import get_best_min, protected_div, protected_pow, protected_max, protected_min, protected_abs
+from random import *
 
 # Define functions and constants
 
@@ -34,6 +35,10 @@ FUNCTIONS = {
     'subtract': {'function': torch.sub, 'arity': 2},
     'multiply': {'function': torch.mul, 'arity': 2},
     'divide': {'function': protected_div, 'arity': 2},
+    'abs': {'function': protected_abs, 'arity': 1},
+    'pow': {'function': protected_pow, 'arity': 2},
+    'max': {'function': protected_max, 'arity': 2},
+    'min': {'function': protected_min, 'arity': 2},
 }
 
 CONSTANTS = {
@@ -62,6 +67,7 @@ slim_gsgp_solve_parameters = {
     "test_elite": True
 }
 
+seed_n = randint(0,0x7fffffff)
 # SLIM GSGP parameters
 slim_gsgp_parameters = {
     "initializer": "rhh",
@@ -77,7 +83,7 @@ slim_gsgp_parameters = {
     "copy_parent": True,
     "operator": None,
     "pop_size": 100,
-    "seed": 74,
+    "seed": seed_n
 }
 slim_gsgp_parameters["p_m"] = 1 - slim_gsgp_parameters["p_xo"]
 

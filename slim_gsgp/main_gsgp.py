@@ -28,10 +28,10 @@ import uuid
 import os
 import warnings
 
-from slim_gsgp.algorithms.GSGP.gsgp import GSGP
-from slim_gsgp.config.gsgp_config import *
-from slim_gsgp.utils.logger import log_settings
-from slim_gsgp.utils.utils import get_terminals, validate_inputs, generate_random_uniform
+from algorithms.GSGP.gsgp import GSGP
+from config.gsgp_config import *
+from utils.logger import log_settings
+from utils.utils import get_terminals, validate_inputs, generate_random_uniform
 from typing import Callable
 
 def gsgp(X_train: torch.Tensor, y_train: torch.Tensor, X_test: torch.Tensor = None, y_test: torch.Tensor = None,
@@ -270,7 +270,7 @@ def gsgp(X_train: torch.Tensor, y_train: torch.Tensor, X_test: torch.Tensor = No
                        settings_dict],
         unique_run_id=unique_run_id,
     )
-    return optimizer.elite
+    return optimizer.elite, optimizer.population
 
 
 if __name__ == "__main__":

@@ -34,12 +34,12 @@ from utils.utils import (get_terminals, check_slim_version, validate_inputs, gen
                                    get_best_min, get_best_max)
 from algorithms.SLIM_GSGP.operators.mutators import inflate_mutation
 from selection.selection_algorithms import tournament_selection_max, tournament_selection_min
-
+from random import *
 
 ELITES = {}
 UNIQUE_RUN_ID = uuid.uuid1()
 
-
+seed_n = randint(0,0x7fffffff)
 def slim(X_train: torch.Tensor, y_train: torch.Tensor, X_test: torch.Tensor = None, y_test: torch.Tensor = None,
          dataset_name: str = None,
          slim_version: str = "SLIM+SIG2",
@@ -50,7 +50,7 @@ def slim(X_train: torch.Tensor, y_train: torch.Tensor, X_test: torch.Tensor = No
          ms_lower: float = 0, ms_upper: float = 1,
          p_inflate: float = slim_gsgp_parameters["p_inflate"],
          log_path: str = None,
-         seed: int = slim_gsgp_parameters["seed"],
+         seed: int = seed_n,
          log_level: int = slim_gsgp_solve_parameters["log"],
          verbose: int = slim_gsgp_solve_parameters["verbose"],
          reconstruct: bool = slim_gsgp_solve_parameters["reconstruct"],

@@ -258,7 +258,7 @@ def gp(X_train: torch.Tensor, y_train: torch.Tensor, X_test: torch.Tensor = None
         unique_run_id=unique_run_id,
     )
 
-    return optimizer.elite
+    return optimizer.elite, optimizer.population
 
 
 if __name__ == "__main__":
