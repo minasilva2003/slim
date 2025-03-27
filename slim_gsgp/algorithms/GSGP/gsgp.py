@@ -454,7 +454,7 @@ class GSGP:
 
             # replacing the population with the offspring population (P = P')
             population = offs_pop
-
+            self.population = population
             end = time.time()
 
             # replacing the elites

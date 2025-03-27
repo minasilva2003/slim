@@ -211,7 +211,7 @@ class GP:
             )
             # replacing the population with the offspring population (P = P')
             population = offs_pop
-
+            self.population=population
             end = time.time()
 
             # getting the new elite(s)

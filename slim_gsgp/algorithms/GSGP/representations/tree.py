@@ -256,6 +256,6 @@ class Tree:
                     *[torch.sigmoid(tree.predict(data)) if i != 0 else tree.predict(data) for i, tree in
                       enumerate(base_trees)], *ms, testing=False, new_data=True
                 )
+            
 
-
-
+    
