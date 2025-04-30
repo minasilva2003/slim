@@ -30,6 +30,8 @@ import csv
 import random
 from average_runs import average_best_fitness
 from analyse_results import analyze_best_rows
+from average_runs import average_best_fitness
+from analyse_results import analyze_best_rows
 
 def load_data(file_name):
     with open(file_name, "r") as f:
@@ -139,7 +141,6 @@ for run in range(1,max_runs+1):
 
 #analyse results
 average_best_fitness(max_runs)
-
 analyze_best_rows(
     input_csv="results/average_run.csv",
     output_csv="results/best_results.csv"
