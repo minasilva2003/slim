@@ -20,13 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-from slim_gsgp.main_slim import slim  # import the slim_gsgp library
-from slim_gsgp.datasets.data_loader import load_ppb  # import the loader for the dataset PPB
-from slim_gsgp.evaluators.fitness_functions import rmse  # import the rmse fitness metric
-from slim_gsgp.utils.utils import train_test_split  # import the train-test split function
-"""
-
 from main_slim import slim
 from datasets.data_loader import load_pandas_df
 from evaluators.fitness_functions import rmse
@@ -35,6 +28,8 @@ import json
 import pandas as pd
 import csv
 import random
+from average_runs import average_best_fitness
+from analyse_results import analyze_best_rows
 
 def load_data(file_name):
     with open(file_name, "r") as f:
@@ -65,7 +60,9 @@ rmse_problems = load_data("datasets/data/my_data/rmse.json")
 
 correct_threshold = 0.1
 
-for epoch in range(1,31):
+max_runs=30
+
+for run in range(1,max_runs+1):
 
     results = [["problem", "slim_version", "n_iter", "p_inflate", "best_fit", "num_correct"]]
 
@@ -91,11 +88,11 @@ for epoch in range(1,31):
             # Split the test set into validation and test sets
             X_val, X_test, y_val, y_test = train_test_split(X_test, y_test, p_test=0.5)
 
+
+            # Decide parameters for experiments
             slim_version_list=["SLIM+SIG1", "SLIM+SIG2", "SLIM*SIG1", "SLIM*SIG2"]
-            #slim_version_list=["SLIM*SIG1", "SLIM+SIG1"]
             n_iter_list=[2000]
             p_inflate_list=[0.1, 0.5, 0.7]
-            #p_inflate_list=[0.5]
 
             # Apply the SLIM GSGP algorithm
             for cur_slim_version in slim_version_list:
@@ -103,18 +100,17 @@ for epoch in range(1,31):
                     for cur_p_inflate in p_inflate_list:
 
                         num_correct=0
-                        best_fit=10**5
+                        best_fit=10**6
 
                         final_tree, final_population = slim(X_train=X_train, y_train=y_train,
                                         X_test=X_val, y_test=y_val,
                                         dataset_name=f"{benchmark}/{problem}", slim_version=cur_slim_version, pop_size=100, n_iter=cur_n_iter,
-                                        ms_lower=0, ms_upper=1, p_inflate=cur_p_inflate, verbose=0, reconstruct=True, seed=seed_n)
+                                        ms_lower=0, ms_upper=1, p_inflate=cur_p_inflate, verbose=0, reconstruct=True, seed=seed_n, tournament_size=5)
 
                         # Show the best individual structure at the last generation
                         final_tree.print_tree_representation()
 
                         #Compute and print the RMSE for the first 1000 test cases
-                        
                         final_pop = []
                         for individual in final_population.population:
 
@@ -137,8 +133,17 @@ for epoch in range(1,31):
                         
                         
                         results.append([problem, cur_slim_version, cur_n_iter, cur_p_inflate, best_fit, num_correct])
-                        write_list_to_csv(results, f"results/run_{epoch}.csv")
-                        write_list_to_json(final_pop, f"results/pop_{epoch}.json")
+                        write_list_to_csv(results, f"results/stats_{run}.csv")
+                        write_list_to_json(final_pop, f"results/final_pop_{run}.json")
+
+
+#analyse results
+average_best_fitness(max_runs)
+
+analyze_best_rows(
+    input_csv="results/average_run.csv",
+    output_csv="results/best_results.csv"
+)
 
 
 
