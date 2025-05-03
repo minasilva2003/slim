@@ -33,7 +33,7 @@ from slim_gsgp.algorithms.GSGP.representations.tree import Tree
 from slim_gsgp.algorithms.SLIM_GSGP.representations.individual import Individual
 from slim_gsgp.algorithms.SLIM_GSGP.representations.population import Population
 from slim_gsgp.utils.diversity import gsgp_pop_div_from_vectors
-from slim_gsgp.utils.logger import logger
+from utils.logger import logger
 from slim_gsgp.utils.utils import verbose_reporter
 
 
@@ -319,8 +319,8 @@ class SLIM_GSGP:
                 self.elite.fitness,
                 end - start,
                 float(population.nodes_count),
-                additional_infos=add_info,
-                run_info=run_info,
+                additional_infos=None,
+                run_info=None,
                 seed=self.seed,
             )
 
@@ -594,8 +594,8 @@ class SLIM_GSGP:
                     self.elite.fitness,
                     end - start,
                     float(population.nodes_count),
-                    additional_infos=add_info,
-                    run_info=run_info,
+                    additional_infos=None,
+                    run_info=None,
                     seed=self.seed,
                 )
 

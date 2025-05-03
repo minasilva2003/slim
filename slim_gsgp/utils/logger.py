@@ -114,11 +114,11 @@ def logger(
     None
     """
     if not os.path.isdir(os.path.dirname(path)):
-        os.mkdir(os.path.dirname(path))
+        os.makedirs(os.path.dirname(path))
     with open(path, "a", newline="") as file:
         writer = csv.writer(file)
         infos = copy(run_info) if run_info is not None else []
-        infos.extend([seed, generation, float(elite_fit), timing, nodes])
+        infos.extend([generation, float(elite_fit), timing, nodes])
 
         if additional_infos is not None:
             try:

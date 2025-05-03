@@ -62,11 +62,12 @@ rmse_problems = load_data("datasets/data/my_data/rmse.json")
 
 correct_threshold = 0.1
 
+min_runs=1
 max_runs=30
 
-for run in range(1,max_runs+1):
+for run in range(min_runs,max_runs+1):
 
-    results = [["problem", "slim_version", "n_iter", "p_inflate", "best_fit", "num_correct"]]
+    results = [["problem", "slim_version", "p_inflate", "best_fit"]]
 
     seed_n = random.randint(0,0x7fffffff)
 
@@ -93,64 +94,43 @@ for run in range(1,max_runs+1):
 
             # Decide parameters for experiments
             slim_version_list=["SLIM+SIG1", "SLIM+SIG2", "SLIM*SIG1", "SLIM*SIG2"]
-            n_iter_list=[2000]
             p_inflate_list=[0.1, 0.5, 0.7]
+            generations = 300
 
             # Apply the SLIM GSGP algorithm
             for cur_slim_version in slim_version_list:
-                for cur_n_iter in n_iter_list:
-                    for cur_p_inflate in p_inflate_list:
+                for cur_p_inflate in p_inflate_list:
 
-                        num_correct=0
-                        best_fit=10**6
+                    num_correct=0
+                    best_fit=10**6
 
-                        final_tree, final_population = slim(X_train=X_train, y_train=y_train,
-                                        X_test=X_val, y_test=y_val,
-                                        dataset_name=f"{benchmark}/{problem}", slim_version=cur_slim_version, pop_size=100, n_iter=cur_n_iter,
-                                        ms_lower=0, ms_upper=1, p_inflate=cur_p_inflate, verbose=0, reconstruct=True, seed=seed_n, tournament_size=5)
+                    slim_version_name = cur_slim_version.replace("+", "_add_").replace("*", "_mul_")
+                    p_inflate_name = str(cur_p_inflate)[-1]
 
-                        # Show the best individual structure at the last generation
-                        final_tree.print_tree_representation()
+                    final_tree, final_population = slim(X_train=X_train, y_train=y_train,
+                                    X_test=X_val, y_test=y_val,
+                                    dataset_name=f"{benchmark}/{problem}", slim_version=cur_slim_version, pop_size=1000, n_iter=generations,
+                                    ms_lower=0, ms_upper=1, p_inflate=cur_p_inflate, verbose=0, reconstruct=True, seed=seed_n, tournament_size=5,
+                                    log_level=1, log_path=f"results/log/{problem}/{slim_version_name}/mut_{p_inflate_name}/log_{run}.csv")
 
-                        #Compute and print the RMSE for the first 1000 test cases
-                        final_pop = []
-                        for individual in final_population.population:
+                    # Show the best individual structure at the last generation
+                    final_tree.print_tree_representation()
 
-                            individual.version=cur_slim_version
-                        
-                            predictions = individual.predict(X[:1000])
+                    #Compute and print the RMSE for the best individual
+                    predictions = final_tree.predict(X[:1000])
 
-                            fit = float(rmse(y_true=y[:1000], y_pred=predictions))
-                            
-                            #print(fit)
-
-                            #solution is considered correct if fit below certain threshold
-                            if(fit<correct_threshold):
-                                num_correct+=1
-
-                            if(fit<best_fit):
-                                best_fit=fit
-                            
-                            final_pop.append([individual.get_tree_representation(), fit])
-                        
-                        
-                        results.append([problem, cur_slim_version, cur_n_iter, cur_p_inflate, best_fit, num_correct])
-                        write_list_to_csv(results, f"results/stats_{run}.csv")
-                        write_list_to_json(final_pop, f"results/final_pop_{run}.json")
-
-
-#analyse results
-average_best_fitness(max_runs)
-analyze_best_rows(
-    input_csv="results/average_run.csv",
-    output_csv="results/best_results.csv"
-)
+                    best_fit = float(rmse(y_true=y[:1000], y_pred=predictions))
+                    
+                    results.append([problem, cur_slim_version, cur_p_inflate, best_fit])
+                    write_list_to_csv(results, f"results/run_{run}.csv")
+                    #write_list_to_json(final_pop, f"results/final_pop_{run}.json")
 
 
 
 
-        
 
-        
+    
+
+    
 
 
